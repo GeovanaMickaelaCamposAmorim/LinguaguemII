@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,23 +24,32 @@ public class HomeController {
 		return "signin";
 	}
 	
-	@PostMapping("/dashboard")
+	@PostMapping ("/process_login")
+		public String process_login(HttpServletRequest request, Model model) {
+			String usuario = request.getParameter("Usuario");
+			String senha = request.getParameter("Senha");
+			
+			System.out.println("Usuario: " + usuario);
+			System.out.println("Senha: " + senha);
+			
+			HttpSession session = request.getSession();
+			
+			if (senha.equals ("12345678") ) {
+			model.addAttribute ("nome", usuario);
+			model.addAttribute ("descricao", "Passear");
+			session.setAttribute ("nome", usuario);
+			     return "dashboard";
+			}
+			else {
+			model.addAttribute ("mensagem", "Senha Invalida");
+			return "erro";
+			}
+	}
+	
+	
+	@GetMapping("/dashboard")
 	public String dashboard(HttpServletRequest request, Model model) {
-		String usuario = request.getParameter("Usuario");
-		String senha = request.getParameter("Senha");
-		
-		System.out.println("Usuario: " + usuario);
-		System.out.println("Senha: " + senha);
-		
-		if (senha.equals ("12345678") ) {
-		model.addAttribute ("nome", usuario);
-		model.addAttribute ("descricao", "Passear");
-		     return "dashboard";
-		}
-		else {
-		model.addAttribute ("mensagem", "Senha Invalida");
-		return "erro";
-		}
+	return "dashboard";
 	}
 	
 	@GetMapping("/signup")
@@ -57,4 +67,11 @@ public class HomeController {
 		return "cadastrado";
 	}
 	
+	@GetMapping ("/cadastro_livro")
+	public String cadastro_livro(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		String usuario = (String) session.getAttribute("nome");
+		System.out.println(usuario);
+		return "cadastro_livro";
+	}
 }
